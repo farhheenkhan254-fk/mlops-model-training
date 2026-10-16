@@ -1,4 +1,4 @@
-```yaml
+
 name: MLOps CI Pipeline
 
 on:
@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - feature/advanced-mlops
+      - feature/automated-deployment
   pull_request:
     branches:
       - main
@@ -32,7 +33,7 @@ jobs:
       - name: Validate dataset
         run: python validate_data.py
 
-      - name: Train model and log MLflow metrics
+      - name: Train model
         run: python train.py
 
       - name: Run automated tests
@@ -48,12 +49,13 @@ jobs:
         run: |
           python -c "import json,sys; p=json.load(open('monitoring/performance_report.json')); print('Accuracy:', p['accuracy']); print('Weighted F1:', p['weighted_f1']); print('Status:', p['status']); sys.exit(0 if p['status'] == 'PASS' else 1)"
 
-      - name: Upload monitoring reports
+      - name: Upload model and monitoring reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: monitoring-reports
-          path: monitoring/
+          name: trained-model-and-reports
+          path: |
+            model.joblib
+            monitoring/
           if-no-files-found: warn
           retention-days: 7
-```
