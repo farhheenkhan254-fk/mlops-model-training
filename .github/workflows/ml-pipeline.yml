@@ -3,13 +3,13 @@ name: MLOps CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, "feature/advanced-mlops"]
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 jobs:
-  train-and-test:
+  train-test-monitor:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,17 +26,33 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Validate dataset
+        run: python validate_data.py
+
       - name: Train model and log MLflow metrics
         run: python train.py
 
-      - name: Run tests
+      - name: Run automated tests
         run: python -m pytest tests/ -v
 
-      - name: Upload model artifact
+      - name: Monitor data drift
+        run: python monitor_drift.py
+
+      - name: Monitor model performance
+        run: python monitor_performance.py
+
+      - name: Enforce performance thresholds
+        run: |
+          python -c "import json,sys; p=json.load(open('monitoring/performance_report.json')); print('Accuracy:', p['accuracy']); print('Weighted F1:', p['weighted_f1']); print('Status:', p['status']); sys.exit(0 if p['status'] == 'PASS' else 1)"
+
+      - name: Upload model and monitoring reports
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: trained-model
-          path: model.joblib
+          name: trained-model-and-reports
+          path: |
+            model.joblib
+            monitoring/performance_report.json
+            monitoring/*.png
           if-no-files-found: error
           retention-days: 7
