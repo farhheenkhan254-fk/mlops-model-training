@@ -1,0 +1,8 @@
+scikit-learn
+mlflow
+pandas
+numpy
+joblib
+pytest
+jupyter
+ipykernel
