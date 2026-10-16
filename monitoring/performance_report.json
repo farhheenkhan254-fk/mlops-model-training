@@ -1,0 +1,8 @@
+{
+    "accuracy": 0.8506064793489944,
+    "weighted_f1": 0.846371603243178,
+    "minimum_accuracy": 0.8,
+    "minimum_weighted_f1": 0.8,
+    "status": "PASS",
+    "evaluation_rows": 6513
+}
