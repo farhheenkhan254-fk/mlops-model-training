@@ -1,4 +1,4 @@
-
+```yaml
 name: MLOps CI Pipeline
 
 on:
@@ -45,14 +45,12 @@ jobs:
         run: |
           python -c "import json,sys; p=json.load(open('monitoring/performance_report.json')); print('Accuracy:', p['accuracy']); print('Weighted F1:', p['weighted_f1']); print('Status:', p['status']); sys.exit(0 if p['status'] == 'PASS' else 1)"
 
-      - name: Upload model and monitoring reports
-        if: success()
+      - name: Upload monitoring reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: trained-model-and-reports
-          path: |
-            model.joblib
-            monitoring/performance_report.json
-            monitoring/*.png
-          if-no-files-found: error
+          name: monitoring-reports
+          path: monitoring/
+          if-no-files-found: warn
           retention-days: 7
+```
