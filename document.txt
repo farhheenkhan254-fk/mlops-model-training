@@ -1,0 +1,710 @@
+# End-to-End MLOps Model Training Project
+
+## 1. Project Overview
+
+**Project Name:** Adult Census Income Prediction using MLOps
+
+**GitHub Repository:** https://github.com/farhheenkhan254-fk/mlops-model-training
+
+**Live Streamlit App:** https://mlops-model-training-8jhfnme7x2han4vexr6xff.streamlit.app/
+
+### Project Objective
+
+Is project ka main objective ek Machine Learning model banana hai jo Adult Census dataset ke basis par predict kare ki kisi person ki annual income `<=50K` hai ya `>50K`.
+
+Iske saath humne MLOps practices implement ki hain, jisse model training, testing, experiment tracking, model versioning, monitoring aur CI/CD pipeline ko automate kiya ja sake.
+
+### Technologies Used
+
+* Python
+* Pandas and NumPy
+* Scikit-learn
+* Joblib
+* MLflow
+* Pytest
+* Git and GitHub
+* GitHub Actions
+* Streamlit
+* JSON-based monitoring reports
+
+---
+
+## 2. Project Development Flow
+
+Humne project ko following stages mein develop kiya:
+
+1. Dataset load aur inspect kiya.
+2. Data preprocessing aur feature encoding implement ki.
+3. Random Forest classifier train kiya.
+4. Model ki evaluation metrics calculate ki.
+5. Trained model ko `model.joblib` mein save kiya.
+6. MLflow ke through experiments aur metrics track kiye.
+7. MLflow Model Registry mein model versions register kiye.
+8. Champion alias ke through selected model version promote kiya.
+9. Dataset validation script banayi.
+10. Data drift monitoring implement ki.
+11. Model performance monitoring implement ki.
+12. Pytest ke through automated tests run kiye.
+13. GitHub Actions ke through CI/CD pipeline configure ki.
+14. Model artifact ko GitHub Actions se download karna seekha.
+15. Streamlit par application deploy ki.
+16. Advanced MLOps features ko feature branch par develop karke `main` mein merge kiya.
+
+---
+
+## 3. Dataset Details
+
+Humne Adult Census Income dataset use kiya.
+
+**Dataset path:** `data/adult.csv`
+
+Dataset ke results:
+
+* Total rows: 32,561
+* Total columns: 15
+* Target column: `income`
+* Features: 14
+* Target classes: `<=50K` and `>50K`
+
+Dataset mein age, education, occupation, work hours, capital gain, marital status aur doosri demographic information shamil hain.
+
+### Data preprocessing
+
+Training script mein:
+
+* Target column identify kiya jata hai.
+* Features aur target ko separate kiya jata hai.
+* Invalid target rows remove ki jati hain.
+* Categorical columns ko `pd.get_dummies()` se encode kiya jata hai.
+* Missing feature values ko zero se fill kiya jata hai.
+* Dataset ko training aur testing subsets mein divide kiya jata hai.
+* `stratify=y` se class proportions preserve ki jati hain.
+
+Train-test split:
+
+* Training data: 80%
+* Testing data: 20%
+* Random state: 42
+
+---
+
+## 4. Model Training
+
+**File:** `train.py`
+
+Humne Scikit-learn ka Random Forest classifier use kiya.
+
+Model configuration:
+
+```python
+RandomForestClassifier(
+    n_estimators=100,
+    random_state=42,
+    n_jobs=-1
+)
+```
+
+### Training command
+
+Windows PowerShell mein:
+
+```powershell
+python train.py
+```
+
+### Is command se kya hota hai?
+
+1. Dataset load hota hai.
+2. Features preprocess hote hain.
+3. Training aur testing data banta hai.
+4. Random Forest model train hota hai.
+5. Predictions generate hoti hain.
+6. Accuracy, precision, recall aur F1-score calculate hote hain.
+7. Classification report aur confusion matrix print hoti hain.
+8. Parameters aur metrics MLflow mein log hote hain.
+9. Model `model.joblib` mein save hota hai.
+10. Model MLflow ke through log aur register hota hai.
+
+### Actual model evaluation results
+
+| Metric             | Result |
+| ------------------ | -----: |
+| Accuracy           | 85.06% |
+| Weighted Precision | 84.49% |
+| Weighted Recall    | 85.06% |
+| Weighted F1-score  | 84.64% |
+
+### Classification report
+
+| Income class | Precision | Recall | F1-score |
+| ------------ | --------: | -----: | -------: |
+| `<=50K`      |      0.88 |   0.92 |     0.90 |
+| `>50K`       |      0.72 |   0.62 |     0.67 |
+
+Model overall achha perform kar raha hai, lekin `>50K` class ka recall 0.62 hai. Iska matlab higher-income class ke kuch actual examples model miss kar raha hai. Future improvement mein class imbalance, threshold tuning aur alternative models evaluate kiye ja sakte hain.
+
+---
+
+## 5. Model Saving and Prediction
+
+**Model file:** `model.joblib`
+
+Training script model aur feature names save karta hai:
+
+```python
+joblib.dump(
+    {
+        "model": model,
+        "features": X.columns.tolist()
+    },
+    MODEL_PATH
+)
+```
+
+Feature names save karna important hai, kyunki prediction ke waqt input columns ka order training ke columns se match hona chahiye.
+
+### Prediction command
+
+```powershell
+python predict.py
+```
+
+`predict.py` saved model ko load karke prediction functionality provide karta hai. Actual prediction output input data aur script ke implementation par depend karega.
+
+---
+
+## 6. Automated Testing with Pytest
+
+**Test file:** `tests/test_model.py`
+
+Humne teen automated tests run kiye:
+
+1. Dataset file exists.
+2. Trained model file exists.
+3. Model prediction successfully execute hoti hai.
+
+### Command
+
+```powershell
+python -m pytest tests/ -v
+```
+
+### Actual result
+
+```text
+tests/test_model.py::test_dataset_exists PASSED
+tests/test_model.py::test_trained_model_exists PASSED
+tests/test_model.py::test_model_prediction PASSED
+
+3 passed
+```
+
+Isse confirm hua ki us test run ke waqt dataset aur model available the aur model prediction test pass hua.
+
+---
+
+## 7. MLflow Experiment Tracking
+
+MLflow ka use training experiments, parameters, metrics aur artifacts track karne ke liye kiya.
+
+Experiment name:
+
+`adult-income-classification`
+
+### MLflow setup
+
+```powershell
+python -m pip install -r requirements.txt
+python -m mlflow ui
+```
+
+Browser mein open karo:
+
+http://127.0.0.1:5000
+
+### MLflow mein kya log hota hai?
+
+* Model type
+* Number of estimators
+* Training aur testing rows
+* Accuracy
+* Precision
+* Recall
+* F1-score
+* Classification report
+* Trained model artifacts
+
+MLflow UI mein experiments aur runs compare karke model performance evaluate kar sakte hain.
+
+Note: MLflow UI chalane ke liye terminal open rehna chahiye. MLflow database aur tracking artifacts ko backup/version control karne ki strategy alag se manage karni chahiye.
+
+---
+
+## 8. Model Versioning and Model Registry
+
+Humne MLflow Model Registry use ki.
+
+**Registered model name:** `AdultIncomeClassifier`
+
+Training ke dauran model ke multiple versions create hue. Ek observed training run mein version 2 aur uske baad version 3 register hua.
+
+### Model registry ka purpose
+
+* Har registered model version ko identify karna.
+* Different versions ka record maintain karna.
+* Selected model version ko alias assign karna.
+* Future mein model promotion aur rollback ko manageable banana.
+
+### Champion alias verify karna
+
+```powershell
+python -c "from mlflow import MlflowClient; c=MlflowClient(); print(c.get_model_version_by_alias('AdultIncomeClassifier', 'champion'))"
+```
+
+Observed result mein `champion` alias version 2 ko point kar raha tha. Baad mein `set_champion.py` chalane par version 3 promotion successful hui.
+
+### Champion promotion command
+
+```powershell
+python set_champion.py
+```
+
+Yeh script registered model version ko verify karke `champion` alias assign karti hai.
+
+**Important:** `set_champion.py` mein version hard-coded hai. Production workflow mein model ko promote karne se pehle uske evaluation metrics aur acceptance thresholds verify karne chahiye.
+
+---
+
+## 9. Data Validation
+
+**File:** `validate_data.py`
+
+Data validation ka purpose training se pehle dataset ki basic quality verify karna hai.
+
+### Command
+
+```powershell
+python validate_data.py
+```
+
+### Actual output
+
+```text
+===== DATA VALIDATION =====
+Dataset shape: (32561, 15)
+Required columns: PASSED
+Dataset non-empty: PASSED
+Income target check: PASSED
+Missing values (NaN): 0
+Unknown values ('?'): 4262
+DATA VALIDATION PASSED
+```
+
+### Iska matlab
+
+* Dataset file read ho gayi.
+* Required columns available the.
+* Dataset empty nahi tha.
+* Income target check pass hua.
+* NaN values zero thi.
+* 4,262 question-mark (`?`) values detect hui.
+
+Question marks ko automatically valid data nahi samajhna chahiye. Yeh dataset mein unknown categorical values represent kar sakte hain. Future improvement mein inhe missing/unknown values ke roop mein explicitly handle karna chahiye.
+
+---
+
+## 10. Data Drift Monitoring
+
+**File:** `monitor_drift.py`
+
+Data drift monitoring ka purpose reference data aur current data ke feature distributions mein changes detect karna hai.
+
+### Command
+
+```powershell
+python monitor_drift.py
+```
+
+### Monitored features
+
+* `age`
+* `education.num`
+* `hours.per.week`
+* `capital.gain`
+
+### Observed result
+
+| Feature        | Standardized mean difference |
+| -------------- | ---------------------------: |
+| age            |                        0.000 |
+| education.num  |                        0.002 |
+| hours.per.week |                        0.026 |
+| capital.gain   |                        0.001 |
+
+Observed run mein kisi feature ke liye large mean shift detect nahi hua.
+
+Reports `monitoring/` folder mein save hui.
+
+**Limitation:** Yeh mean-based drift check hai. Isse har tarah ka data drift detect hone ki guarantee nahi hai. Agar reference aur current data same dataset se liye gaye hain, to monitoring result real production drift ko represent nahi karega.
+
+---
+
+## 11. Model Performance Monitoring
+
+**File:** `monitor_performance.py`
+
+Yeh script saved model ko held-out evaluation data par evaluate karti hai.
+
+### Command
+
+```powershell
+python monitor_performance.py
+```
+
+### Actual output
+
+```text
+===== MODEL PERFORMANCE MONITORING =====
+Accuracy: 0.8506
+Weighted F1: 0.8464
+Evaluation rows: 6513
+Status: PASS
+```
+
+Report file:
+
+`monitoring/performance_report.json`
+
+Script mein thresholds define hain:
+
+```python
+MIN_ACCURACY = 0.80
+MIN_F1 = 0.80
+```
+
+Agar accuracy aur weighted F1 dono thresholds meet karte hain, to status `PASS` hota hai; warna `ALERT`.
+
+Yeh thresholds demonstration ke liye hain. Real production monitoring mein incoming labeled data, timestamped predictions aur independent evaluation datasets use karne chahiye.
+
+---
+
+## 12. GitHub and Branch Management
+
+Humne Git aur GitHub ka use source code version control aur collaboration ke liye kiya.
+
+Feature branch:
+
+`feature/advanced-mlops`
+
+Main branch:
+
+`main`
+
+### Repository initialize karna
+
+```powershell
+git init
+```
+
+### Changes check karna
+
+```powershell
+git status
+```
+
+### Files stage karna
+
+```powershell
+git add .
+```
+
+### Commit banana
+
+```powershell
+git commit -m "Add MLOps monitoring pipeline"
+```
+
+### Feature branch par push karna
+
+```powershell
+git push origin feature/advanced-mlops
+```
+
+### Pull Request workflow
+
+1. GitHub par feature branch open ki.
+2. Pull Request create ki.
+3. GitHub Actions ke results check kiye.
+4. Changes ko `main` branch mein merge kiya.
+
+Feature branch par kaam karne se advanced MLOps changes ko main codebase mein merge karne se pehle test karna possible hota hai.
+
+---
+
+## 13. GitHub Actions CI/CD Pipeline
+
+**Workflow file:** `.github/workflows/ml-pipeline.yml`
+
+GitHub Actions pipeline ko push, pull request aur manual workflow dispatch par trigger karne ke liye configure kiya.
+
+### Pipeline flow
+
+```text
+Code Push / Pull Request
+          |
+          v
+   Checkout Repository
+          |
+          v
+      Setup Python
+          |
+          v
+   Install Dependencies
+          |
+          v
+    Validate Dataset
+          |
+          v
+      Train Model
+          |
+          v
+     Run Pytest Tests
+          |
+          v
+   Monitor Data Drift
+          |
+          v
+Monitor Model Performance
+          |
+          v
+ Enforce Performance Limits
+          |
+          v
+  Upload Monitoring Reports
+```
+
+### Workflow configuration
+
+```yaml
+name: MLOps CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - feature/advanced-mlops
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  train-test-monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate dataset
+        run: python validate_data.py
+
+      - name: Train model and log MLflow metrics
+        run: python train.py
+
+      - name: Run automated tests
+        run: python -m pytest tests/ -v
+
+      - name: Monitor data drift
+        run: python monitor_drift.py
+
+      - name: Monitor model performance
+        run: python monitor_performance.py
+
+      - name: Enforce performance thresholds
+        run: |
+          python -c "import json,sys; p=json.load(open('monitoring/performance_report.json')); print('Accuracy:', p['accuracy']); print('Weighted F1:', p['weighted_f1']); print('Status:', p['status']); sys.exit(0 if p['status'] == 'PASS' else 1)"
+
+      - name: Upload monitoring reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-reports
+          path: monitoring/
+          if-no-files-found: warn
+          retention-days: 7
+```
+
+### Pipeline ka purpose
+
+* Code push hone par automated checks chalana.
+* Dataset validate karna.
+* Model train karna.
+* Tests run karna.
+* Drift aur performance reports generate karna.
+* Performance threshold fail hone par job fail karna.
+* Monitoring reports ko artifact ke roop mein upload karne ki koshish karna.
+
+### Important workflow status
+
+Pehle ek workflow run successfully complete hua tha aur teen tests pass hue the. Advanced monitoring changes add karne ke baad ek run `validate_data.py` missing hone ki wajah se fail hua. Baad ke run mein YAML syntax error report hua.
+
+Isliye final documentation mein CI/CD setup ko implemented, lekin **latest workflow ko green status ke saath re-verify karna baaki** maana jayega. Updated YAML save aur push karne ke baad latest run verify karna zaroori hai.
+
+---
+
+## 14. GitHub Actions Artifacts
+
+CI workflow model aur reports ko downloadable artifacts ke roop mein save kar sakta hai.
+
+Earlier successful workflow mein artifact ka naam `trained-model` tha. Monitoring workflow mein artifact ka naam `monitoring-reports` configure kiya gaya.
+
+### Artifact download karna
+
+1. GitHub repository kholo.
+2. Actions tab par jao.
+3. Successful workflow run select karo.
+4. Page ke Artifacts section mein artifact par click karo.
+5. ZIP download karke extract karo.
+
+Artifact ek downloadable build output hota hai; yeh apne aap production deployment nahi karta.
+
+---
+
+## 15. Streamlit Web Application
+
+**Application file:** `app.py`
+
+Streamlit ka use trained model ko user interface ke through accessible banane ke liye kiya gaya.
+
+Live URL:
+
+https://mlops-model-training-8jhfnme7x2han4vexr6xff.streamlit.app/
+
+### Local application run karna
+
+```powershell
+streamlit run app.py
+```
+
+Application browser mein open hogi. User input deta hai aur application model ki prediction display karti hai.
+
+### Streamlit deployment flow
+
+1. Code GitHub repository mein push kiya.
+2. Streamlit Community Cloud open kiya.
+3. GitHub account authorize kiya.
+4. Repository select ki.
+5. Main file path mein `app.py` select kiya.
+6. App deploy ki.
+7. Deployment URL se application test ki.
+
+Live app ki current health aur latest deployment state ko browser mein verify karna chahiye.
+
+---
+
+## 16. Important Project Commands
+
+| Task                   | Command                                     |
+| ---------------------- | ------------------------------------------- |
+| Install dependencies   | `python -m pip install -r requirements.txt` |
+| Validate data          | `python validate_data.py`                   |
+| Train model            | `python train.py`                           |
+| Run predictions        | `python predict.py`                         |
+| Run tests              | `python -m pytest tests/ -v`                |
+| Monitor drift          | `python monitor_drift.py`                   |
+| Monitor performance    | `python monitor_performance.py`             |
+| Promote champion model | `python set_champion.py`                    |
+| Start MLflow UI        | `python -m mlflow ui`                       |
+| Start Streamlit        | `streamlit run app.py`                      |
+| Check Git changes      | `git status`                                |
+| Push feature branch    | `git push origin feature/advanced-mlops`    |
+
+Windows par virtual environment activate karne ke liye:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+---
+
+## 17. Current Project Status
+
+| Feature                                        | Status                                     |
+| ---------------------------------------------- | ------------------------------------------ |
+| Dataset loading and preprocessing              | Implemented                                |
+| Random Forest training                         | Implemented                                |
+| Model evaluation                               | Verified                                   |
+| Joblib model saving                            | Implemented                                |
+| Pytest automation                              | 3 tests passed in observed run             |
+| MLflow experiment tracking                     | Implemented                                |
+| MLflow model registration                      | Verified in training output                |
+| Champion alias promotion                       | Version 3 promotion reported successful    |
+| Dataset validation                             | Passed locally                             |
+| Data drift monitoring                          | Passed locally                             |
+| Performance monitoring                         | PASS locally                               |
+| GitHub Actions workflow                        | Configured; latest YAML needs verification |
+| Streamlit deployment                           | Live URL obtained                          |
+| Automatic deployment of newly approved models  | Not yet verified                           |
+| Automated rollback to previous model           | Not yet implemented/verified               |
+| Production data and live prediction monitoring | Future improvement                         |
+
+---
+
+## 18. Remaining Advanced MLOps Improvements
+
+### A. Automated model promotion
+
+Training ke baad model ko automatically promote karne se pehle evaluation thresholds aur model quality checks enforce karne chahiye.
+
+### B. Production data drift
+
+Production se aane wale naye inputs ko reference data se compare karna chahiye. Sirf original dataset ko dobara evaluate karna production drift monitoring ke liye sufficient nahi hai.
+
+### C. Data validation improvements
+
+Question-mark values, missing values, data types, valid ranges aur target classes ko explicitly validate karna chahiye.
+
+### D. Automated deployment
+
+Approved model version ko deployment environment mein publish karne ka process configure karna hoga. GitHub Actions ka successful hona akela model deployment complete hone ka proof nahi hai.
+
+### E. Rollback
+
+Agar deployed model ka performance threshold fail ho, to previous verified model version par wapas switch karne ki tested strategy implement karni hogi.
+
+### F. Monitoring alerts
+
+Performance ya drift thresholds fail hone par logs ke saath notification mechanism configure kiya ja sakta hai.
+
+### G. Reproducibility and security
+
+* Dependencies ko version-pin karna.
+* Dataset versions track karna.
+* Model artifacts aur MLflow tracking data ka backup rakhna.
+* Git mein virtual environment aur unnecessary generated files commit na karna.
+* Sensitive credentials ko GitHub Secrets mein rakhna.
+
+---
+
+## 19. Final Conclusion
+
+Is project mein humne ek basic Machine Learning workflow ko MLOps pipeline mein expand kiya. Humne model training, evaluation, experiment tracking, model registration, automated testing, data validation, monitoring, GitHub Actions aur Streamlit deployment par kaam kiya.
+
+Observed model accuracy 85.06% aur weighted F1-score 0.8464 raha. Automated tests ke ek verified run mein teenon tests pass hue. Model Registry mein versions aur champion alias bhi use kiye gaye.
+
+Project ka next major milestone latest CI pipeline ko green status mein verify karna, approved model ki automated deployment configure karna aur tested rollback mechanism banana hai.
+
+**Project repository:** https://github.com/farhheenkhan254-fk/mlops-model-training
+
+**Live application:** https://mlops-model-training-8jhfnme7x2han4vexr6xff.streamlit.app/

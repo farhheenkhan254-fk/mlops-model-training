@@ -5,3 +5,4 @@ __pycache__/
 mlruns/
 .env
 *.pyc
+# document.txt
