@@ -186,13 +186,30 @@ def train_model():
 
         mlflow.log_artifact(str(report_path))
 
-        # 12. Log trained model to MLflow
-        mlflow.sklearn.log_model(
+        # # 12. Log trained model to MLflow
+        # mlflow.sklearn.log_model(
+        #     sk_model=model,
+        #     name="adult-income-model",
+        #     skops_trusted_types=[
+        #         "sklearn.tree._tree.Tree"
+        #     ]
+        # )
+        
+        # 12. Log and register trained model in MLflow
+        model_info = mlflow.sklearn.log_model(
             sk_model=model,
             name="adult-income-model",
+            registered_model_name="AdultIncomeClassifier",
             skops_trusted_types=[
                 "sklearn.tree._tree.Tree"
             ]
+        )
+
+        print("\nMLflow Model Registry")
+        print("Registered model: AdultIncomeClassifier")
+        print(
+            "Model URI:",
+            model_info.model_uri
         )
 
         # 13. Save model and feature names for Streamlit
